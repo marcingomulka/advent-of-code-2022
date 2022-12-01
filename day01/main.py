@@ -12,6 +12,7 @@ for line in lines:
         elve = []
     else:
         elve.append(int(line))
+elves.append(sum(elve))
 
 elves.sort(reverse=True)
 print(elves)
