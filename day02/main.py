@@ -2,24 +2,20 @@ import sys
 
 MY_POINTS = {"X": 1, "Y": 2, "Z": 3}
 
+WIN_PAIRS = {"A": "Y", "B": "Z", "C": "X"}
+DRAW_PAIRS = {"A": "X", "B": "Y", "C": "Z"}
+LOSE_PAIRS = {"A": "Z", "B": "X", "C": "Y"}
 
-def compare(opponent, me):
-    if me == "Z" and opponent == "B":
-        return True
-    elif me == "X" and opponent == "C":
-        return True
-    elif me == "Y" and opponent == "A":
+
+def is_win(opponent, me):
+    if WIN_PAIRS[opponent] == me:
         return True
     else:
         return False
 
 
 def is_draw(opponent, me):
-    if me == "X" and opponent == "A":
-        return True
-    elif me == "Y" and opponent == "B":
-        return True
-    elif me == "Z" and opponent == "C":
+    if DRAW_PAIRS[opponent] == me:
         return True
     else:
         return False
@@ -27,31 +23,16 @@ def is_draw(opponent, me):
 
 def calculate_turn(opponent, me):
     if me == "X":  # loose
-        if opponent == "A":
-            return "Z"
-        elif opponent == "B":
-            return "X"
-        else:
-            return "Y"
+        return LOSE_PAIRS[opponent]
     elif me == "Y":  # draw
-        if opponent == "A":
-            return "X"
-        elif opponent == "B":
-            return "Y"
-        else:
-            return "Z"
+        return DRAW_PAIRS[opponent]
     elif me == "Z":  # win
-        if opponent == "A":
-            return "Y"
-        elif opponent == "B":
-            return "Z"
-        else:
-            return "X"
+        return WIN_PAIRS[opponent]
 
 
 def calculate_score(opponent, me):
     score = 0
-    if compare(opponent, me):
+    if is_win(opponent, me):
         score += 6
     elif is_draw(opponent, me):
         score += 3
@@ -72,7 +53,6 @@ for line in lines:
     me = chunks[1]
 
     score += calculate_score(opponent, me)
-
     my_strategy = calculate_turn(opponent, me)
     part2_score += calculate_score(opponent, my_strategy)
 
