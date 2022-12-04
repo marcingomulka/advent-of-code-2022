@@ -16,10 +16,10 @@ for line in lines:
     pair = line.split(',')
     range1 = build_sequence(pair[0])
     range2 = build_sequence(pair[1])
-
-    if range1.intersection(range2) == range2 or range1.intersection(range2) == range1:
+    intersect = range1.intersection(range2)
+    if intersect == range2 or intersect == range1:
         p1_sum += 1
-    if len(range1.intersection(range2)) > 0:
+    if len(intersect) > 0:
         p2_sum += 1
 
 print("part1: ", p1_sum)
