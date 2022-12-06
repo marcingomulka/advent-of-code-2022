@@ -1,34 +1,27 @@
 import sys
 from collections import deque
 
+
+def find_start_packet_pos(char_list, buffer_len):
+    buffer = deque()
+    result = 0
+    for i in range(len(char_list)):
+        char = char_list[i]
+        if len(buffer) == buffer_len and len(set(buffer)) == buffer_len:
+            result = i
+            break
+        else:
+            if len(buffer) == buffer_len:
+                buffer.popleft()
+            buffer.append(char)
+    return result
+
+
 lines = []
 for line in sys.stdin:
     lines.append(line)
 
-char_list = lines[0]
-buffer_p1 = deque()
-p1_result = 0
-for i in range(len(char_list)):
-    char = char_list[i]
-    if len(buffer_p1) == 4 and len(set(buffer_p1)) == 4:
-        p1_result = i
-        break
-    else:
-        if len(buffer_p1) == 4:
-            buffer_p1.popleft()
-        buffer_p1.append(char)
-
-buffer_p2 = deque()
-p2_result = 0
-for i in range(len(char_list)):
-    char = char_list[i]
-    if len(buffer_p2) == 14 and len(set(buffer_p2)) == 14:
-        p2_result = i
-        break
-    else:
-        if len(buffer_p2) == 14:
-            buffer_p2.popleft()
-        buffer_p2.append(char)
-
+p1_result = find_start_packet_pos(lines[0], 4)
+p2_result = find_start_packet_pos(lines[0], 14)
 print("part1: ", p1_result)
 print("part2: ", p2_result)
