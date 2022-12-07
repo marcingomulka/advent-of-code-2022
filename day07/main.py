@@ -2,17 +2,18 @@ import sys
 
 
 class Node:
-    def __init__(self, name, size, children, parent):
+    def __init__(self, name, size, subdirs, files, parent):
         self.name = name
         self.size = size
-        self.children = children
+        self.subdirs = subdirs
+        self.files = files
         self.parent  = parent
 
 
-def get_child(name, curr_node):
-    for child in curr_node.children:
-        if child.name == name:
-            return child
+def get_subdir(name, curr_node):
+    for subdir in curr_node.subdirs:
+        if subdir.name == name:
+            return subdir
     return None
 
 
@@ -23,7 +24,7 @@ def execute_command(cmd, arg, curr_node, root):
         elif arg == '..':
             return curr_node.parent
         else:
-            return get_child(arg, curr_node)
+            return get_subdir(arg, curr_node)
 
 
 def print_tree(root, level):
@@ -36,16 +37,16 @@ def print_tree(root, level):
     output += ":"
     output += str(root.size)
     print(output)
-    for child in root.children:
-        print_tree(child, level + 1)
+    for subdir in root.subdirs:
+        print_tree(subdir, level + 1)
 
 
 def calculate_sizes(node, path, dir_sizes):
     children_size = 0
     path += "/"
     path += node.name
-    for child in node.children:
-        children_size += calculate_sizes(child, path, dir_sizes)
+    for subdir in node.subdirs:
+        children_size += calculate_sizes(subdir, path, dir_sizes)
     node.size += children_size
     dir_sizes[path] = node.size
     return node.size
@@ -72,22 +73,26 @@ lines = []
 for line in sys.stdin:
     lines.append(line.strip())
 
-tree = Node("/", 0, [], None)
+tree = Node("/", 0, [], set(), None)
 curr_node = tree
 for line in lines:
     chunks = line.split()
     if line.startswith("$"):
-        if line.startswith("$ cd"):
+        if chunks[1] == "cd":
             cmd = chunks[1]
             arg = chunks[2]
             curr_node = execute_command(cmd, arg, curr_node, tree)
     elif line.startswith("dir"):
         sub_dir_name = chunks[1]
-        sub_dir = Node(sub_dir_name, 0, [], curr_node)
-        curr_node.children.append(sub_dir)
+        if get_subdir(sub_dir_name, curr_node) is None:
+            sub_dir = Node(sub_dir_name, 0, [], set(), curr_node)
+            curr_node.subdirs.append(sub_dir)
     else:
+        filename = chunks[1]
         file_size = int(chunks[0])
-        curr_node.size += file_size
+        if filename not in curr_node.files:
+            curr_node.size += file_size
+            curr_node.files.add(filename)
 
 dir_sizes = dict()
 calculate_sizes(tree, "file://", dir_sizes)
