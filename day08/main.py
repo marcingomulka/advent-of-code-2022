@@ -1,33 +1,21 @@
 import sys
 
 
-def mark_h(forest, visible):
-    for i in range(0, len(forest)):
-        visible[i][0] = 1
-        top = forest[i][0]
-        for j in range(0, len(forest[i])):
-            if forest[i][j] > top:
-                visible[i][j] = 1
-                top = forest[i][j]
-        visible[i][-1] = 1
-        top = forest[i][-1]
-        for j in reversed(range(0, len(forest[i]))):
+def mark_h(forest, visible, start, hrange):
+    for i in range(len(forest)):
+        visible[i][start] = 1
+        top = forest[i][start]
+        for j in hrange:
             if forest[i][j] > top:
                 visible[i][j] = 1
                 top = forest[i][j]
 
 
-def mark_v(forest, visible):
-    for i in range(0, len(forest[0])):
-        visible[0][i] = 1
-        top = forest[0][i]
-        for j in range(0, len(forest)):
-            if forest[j][i] > top:
-                visible[j][i] = 1
-                top = forest[j][i]
-        visible[-1][i] = 1
-        top = forest[-1][i]
-        for j in reversed(range(0, len(forest))):
+def mark_v(forest, visible, start, vrange):
+    for i in range(len(forest[0])):
+        visible[start][i] = 1
+        top = forest[start][i]
+        for j in vrange:
             if forest[j][i] > top:
                 visible[j][i] = 1
                 top = forest[j][i]
@@ -67,8 +55,10 @@ for line in lines:
     visible.append([0] * len(line))
     scores.append([0] * len(line))
 
-mark_h(forest, visible)
-mark_v(forest, visible)
+mark_h(forest, visible, 0, range(len(forest[0])))
+mark_h(forest, visible, -1, range(len(forest[0]) - 1, 0, -1))
+mark_v(forest, visible, 0, range(len(forest)))
+mark_v(forest, visible, -1, range(len(forest) - 1, 0, -1))
 print("part1: ", sum(map(sum, visible)))
 
 row_count = len(forest)
