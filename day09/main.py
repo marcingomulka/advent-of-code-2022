@@ -18,10 +18,6 @@ class Move:
                 return (pos[0] + 1, pos[1])
 
 
-def dist(to_follow, knot):
-    return max(abs(to_follow[0] - knot[0]), abs(to_follow[1] - knot[1]))
-
-
 def follow(to_follow, knot):
     dist_x = abs(to_follow[0] - knot[0])
     dist_y = abs(to_follow[1] - knot[1])
@@ -61,13 +57,12 @@ for move in moves:
         to_follow = head_pos
         for i in range(len(knot_positions)):
             knot = knot_positions[i]
-            if dist(to_follow, knot) >= 2:
-                knot = follow(to_follow, knot)
-                if i == 0:
-                    p1_trace.add(knot)
-                if i == 8:
-                    p2_trace.add(knot)
+            knot = follow(to_follow, knot)
             to_follow = knot
             knot_positions[i] = knot
+            if i == 0:
+                p1_trace.add(knot)
+            if i == 8:
+                p2_trace.add(knot)
 print("part1:", len(p1_trace))
-print("part2: ", len(p2_trace))
+print("part2:", len(p2_trace))
