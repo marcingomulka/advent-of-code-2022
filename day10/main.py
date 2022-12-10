@@ -31,16 +31,11 @@ row = 0
 col = 0
 screen = []
 for i in range(6):
-    r = []
-    for j in range(40):
-        r.append(" ")
-    screen.append(r)
+    screen.append(["."] * 40)
 for instr in instructions:
     for i in range(CYCLES[instr.instruction]):
-        if col == register_x or col == register_x - 1 or col == register_x + 1:
+        if col in {register_x, register_x + 1, register_x - 1}:
             screen[row][col] = "#"
-        else:
-            screen[row][col] = "."
         col += 1
         if cycles in STEPS:
             p1_result += cycles * register_x
