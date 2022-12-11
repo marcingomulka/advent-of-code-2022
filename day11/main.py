@@ -1,5 +1,6 @@
 import sys
 from copy import deepcopy
+from functools import reduce
 
 
 class Monkey:
@@ -103,13 +104,13 @@ for i in range(20):
     for monkey in monkeys:
         monkey.turn(0)
 sorted_monkeys = sorted(monkeys, key=lambda x: x.checks, reverse=True)
-print("part1:", sorted_monkeys[0].checks * sorted_monkeys[1].checks)
+print("part1:", reduce(lambda x, y: x.checks * y.checks, sorted_monkeys[:2]))
 
 monkeys = monkeys_copy
 for i in range(10000):
     for monkey in monkeys:
         monkey.turn(modulo)
 sorted_monkeys = sorted(monkeys, key=lambda x: x.checks, reverse=True)
-print("part2:", sorted_monkeys[0].checks * sorted_monkeys[1].checks)
+print("part2:", reduce(lambda x, y: x.checks * y.checks, sorted_monkeys[:2]))
 
 
