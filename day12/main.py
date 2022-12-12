@@ -1,17 +1,20 @@
 import sys
 
 
-def can_move(target, start):
-    if start == "S":
-        start = "a"
-    if target == "E":
-        target = "z"
-    if ord(target) == ord(start) + 1 or ord(target) <= ord(start):
-        return True
+def can_move(board, target, start):
+    v_target = board[target[0]][target[1]]
+    v_start = board[start[0]][start[1]]
+    if v_start == "S":
+        v_start = "a"
+    if v_target == "E":
+        v_target = "z"
+    return ord(v_target) == ord(v_start) + 1 or ord(v_target) <= ord(v_start)
 
 
-def get_neighbors(i, j, board):
+def get_neighbors(pos, board):
     neighbors = []
+    i = pos[0]
+    j = pos[1]
     if i - 1 >= 0:
         neighbors.append((i - 1, j))
     if i + 1 < len(board):
@@ -29,11 +32,11 @@ def bfs(start, target, board):
     while len(queue) > 0:
         curr_path = queue.pop(0)
         last = curr_path[-1]
-        neighbors = get_neighbors(last[0], last[1], board)
-        if target in neighbors and can_move(board[target[0]][target[1]], board[last[0]][last[1]]):
+        neighbors_list = get_neighbors(last, board)
+        if target in neighbors_list and can_move(board, target, last):
             return len(curr_path)
-        for neighbor in neighbors:
-            if neighbor not in visited and can_move(board[neighbor[0]][neighbor[1]], board[last[0]][last[1]]):
+        for neighbor in neighbors_list:
+            if neighbor not in visited and can_move(board, neighbor, last):
                 new_path = curr_path.copy()
                 new_path.append(neighbor)
                 queue.append(new_path)
