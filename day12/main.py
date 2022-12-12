@@ -35,10 +35,10 @@ def bfs(start, target, board):
         curr_path = queue.popleft()
         last = curr_path[-1]
         neighbors_list = get_neighbors(last, board)
-        if target in neighbors_list and can_move(board, target, last):
-            return len(curr_path)
         for neighbor in neighbors_list:
             if neighbor not in visited and can_move(board, neighbor, last):
+                if target == neighbor:
+                    return len(curr_path)
                 new_path = curr_path.copy()
                 new_path.append(neighbor)
                 queue.append(new_path)
