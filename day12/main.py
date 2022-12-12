@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 
 
 def can_move(board, target, start):
@@ -27,10 +28,11 @@ def get_neighbors(pos, board):
 
 
 def bfs(start, target, board):
-    queue = [[start]]
+    queue = deque()
     visited = {start}
+    queue.append([start])
     while len(queue) > 0:
-        curr_path = queue.pop(0)
+        curr_path = queue.popleft()
         last = curr_path[-1]
         neighbors_list = get_neighbors(last, board)
         if target in neighbors_list and can_move(board, target, last):
