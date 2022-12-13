@@ -5,32 +5,26 @@ from functools import cmp_to_key
 def parse_packet(line):
     stack = []
     elements = []
-    chunks = [*line]
+    chars = [*line]
     num_str = ""
-    for chunk in chunks:
-        if chunk == "[":
+    for char in chars:
+        if char == "[":
             stack.append(elements)
             elements = []
-        elif chunk == "]":
+        elif char == "]":
             if len(num_str) > 0:
                 elements.append(int(num_str))
                 num_str = ""
             outer_elements = stack.pop()
             outer_elements.append(elements)
             elements = outer_elements
-        elif chunk == ",":
+        elif char == ",":
             if len(num_str) > 0:
                 elements.append(int(num_str))
                 num_str = ""
         else:
-            num_str += chunk
-    if len(num_str) > 0:
-        elements.append(int(num_str))
-    elif len(stack) > 0:
-        outer_elements = stack.pop()
-        outer_elements.append(elements)
-        elements = outer_elements
-    return elements
+            num_str += char
+    return elements[0]
 
 
 def compare(list1, list2):
@@ -61,7 +55,7 @@ p_pair = []
 full_list = []
 for line in lines:
     if len(line) > 0:
-        p_pair.append(parse_packet(line[1:-1]))
+        p_pair.append(parse_packet(line))
     else:
         packet_pairs.append((p_pair[0], p_pair[1]))
         full_list.append(p_pair[0])
@@ -74,21 +68,19 @@ full_list.append(p_pair[1])
 p1_result = 0
 for i in range(len(packet_pairs)):
     pair = packet_pairs[i]
-    order = compare(pair[0], pair[1])
-    if order < 0:
-        p1_result += (i + 1)
+    if compare(pair[0], pair[1]) < 0:
+        p1_result += i + 1
 print("part1:", p1_result)
 
 full_list.append([[2]])
 full_list.append([[6]])
-sorted_packets = sorted(full_list, key=cmp_to_key(compare))
+sorted_list = sorted(full_list, key=cmp_to_key(compare))
 x = 0
 y = 0
-for i in range(len(sorted_packets)):
-    p = sorted_packets[i]
-    if p == [[2]]:
+for i in range(len(sorted_list)):
+    if sorted_list[i] == [[2]]:
         x = i + 1
-    elif p == [[6]]:
+    elif sorted_list[i] == [[6]]:
         y = i + 1
 print("part2:", x * y)
 
