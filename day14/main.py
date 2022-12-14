@@ -31,28 +31,26 @@ def draw_vertical(cave, offset, point, start):
             cave[point[1] + i][point[0] - offset] = "#"
 
 
-def is_void(target, cave):
+def can_fall(target, cave):
     return target[1] < 0 or target[1] >= len(cave) or target[0] < 0 \
            or target[0] >= len(cave[0]) or cave[target[1]][target[0]] == "."
 
 
 def fall_sand(sand_src, cave):
     sand = sand_src
-    over_fill = True
     while sand[1] < len(cave):
-        if is_void((sand[0], sand[1] + 1), cave):
+        if can_fall((sand[0], sand[1] + 1), cave):
             sand = (sand[0], sand[1] + 1)
-        elif is_void((sand[0] - 1, sand[1] + 1), cave):
+        elif can_fall((sand[0] - 1, sand[1] + 1), cave):
             sand = (sand[0] - 1, sand[1] + 1)
-        elif is_void((sand[0] + 1, sand[1] + 1), cave):
+        elif can_fall((sand[0] + 1, sand[1] + 1), cave):
             sand = (sand[0] + 1, sand[1] + 1)
         elif 0 <= sand[0] < len(cave[0]) and sand[1] < len(cave) and cave[sand[1]][sand[0]] == ".":
             cave[sand[1]][sand[0]] = "o"
-            over_fill = False
-            break
+            return False
         else:
             break
-    return over_fill
+    return True
 
 
 def print_cave(cave):
@@ -94,13 +92,13 @@ for cave_line in cave_lines:
     draw_line(cave_line, cave, offset)
 cave[sand_src[1]][sand_src[0]] = "+"
 
-filled = False
+overfill = False
 p1_result = 0
-while not filled:
-    filled = fall_sand(sand_src, cave)
-    if not filled:
+while not overfill:
+    overfill = fall_sand(sand_src, cave)
+    if not overfill:
         p1_result += 1
-# print_cave(cave)
+#print_cave(cave)
 print("part1:", p1_result)
 
 new_cave = []
@@ -113,12 +111,12 @@ for i in range(depth + 1):
 new_cave.append(["."] * 1000)
 new_cave.append(["#"] * 1000)
 
+overfill = False
 p2_result = 0
-filled = False
 sand_src2 = (500, 0)
-while not filled:
-    filled = fall_sand(sand_src2, new_cave)
-    if not filled:
+while not overfill:
+    overfill = fall_sand(sand_src2, new_cave)
+    if not overfill:
         p2_result += 1
-# print_cave(new_cave)
+print_cave(new_cave)
 print("part2:", p2_result)
