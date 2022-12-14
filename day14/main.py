@@ -1,5 +1,4 @@
 import sys
-from copy import deepcopy
 
 
 def draw_line(cave_line, cave, offset):
@@ -8,34 +7,33 @@ def draw_line(cave_line, cave, offset):
         cave[point[1]][point[0] - offset] = "#"
         cave[start[1]][start[0] - offset] = "#"
         if start[0] == point[0]:
-            if point[1] - start[1] > 0:
-                for i in range(abs(point[1] - start[1])):
-                    cave[start[1] + i][start[0] - offset] = "#"
-            else:
-                for i in range(abs(point[1] - start[1])):
-                    cave[point[1] + i][point[0] - offset] = "#"
+            draw_vertical(cave, offset, point, start)
         elif start[1] == point[1]:
-            if point[0] - start[0] > 0:
-                for i in range(abs(point[0] - start[0])):
-                    cave[start[1]][start[0] + i - offset] = "#"
-            else:
-                for i in range(abs(point[0] - start[0])):
-                    cave[point[1]][point[0] + i - offset] = "#"
+            draw_horizontal(cave, offset, point, start)
         start = point
 
 
+def draw_horizontal(cave, offset, point, start):
+    if point[0] - start[0] > 0:
+        for i in range(abs(point[0] - start[0])):
+            cave[start[1]][start[0] + i - offset] = "#"
+    else:
+        for i in range(abs(point[0] - start[0])):
+            cave[point[1]][point[0] + i - offset] = "#"
+
+
+def draw_vertical(cave, offset, point, start):
+    if point[1] - start[1] > 0:
+        for i in range(abs(point[1] - start[1])):
+            cave[start[1] + i][start[0] - offset] = "#"
+    else:
+        for i in range(abs(point[1] - start[1])):
+            cave[point[1] + i][point[0] - offset] = "#"
+
+
 def is_void(target, cave):
-    if target[1] < 0:
-        return True
-    if target[1] >= len(cave):
-        return True
-    if target[0] < 0:
-        return True
-    if target[0] >= len(cave[0]):
-        return True
-    if cave[target[1]][target[0]] == ".":
-        return True
-    return False
+    return target[1] < 0 or target[1] >= len(cave) or target[0] < 0 \
+           or target[0] >= len(cave[0]) or cave[target[1]][target[0]] == "."
 
 
 def fall_sand(sand_src, cave):
@@ -54,8 +52,6 @@ def fall_sand(sand_src, cave):
             break
         else:
             break
-    if over_fill:
-        print(offset + sand[0], sand[1])
     return over_fill
 
 
@@ -94,7 +90,6 @@ offset = left
 sand_src = (500 - offset, 0)
 for i in range(depth + 1):
     cave.append(["."] * cols_num)
-
 for cave_line in cave_lines:
     draw_line(cave_line, cave, offset)
 cave[sand_src[1]][sand_src[0]] = "+"
@@ -105,7 +100,7 @@ while not filled:
     filled = fall_sand(sand_src, cave)
     if not filled:
         p1_result += 1
-#print_cave(cave)
+# print_cave(cave)
 print("part1:", p1_result)
 
 new_cave = []
@@ -120,11 +115,10 @@ new_cave.append(["#"] * 1000)
 
 p2_result = 0
 filled = False
-sand_src = (500, 0)
+sand_src2 = (500, 0)
 while not filled:
-    filled = fall_sand(sand_src, new_cave)
+    filled = fall_sand(sand_src2, new_cave)
     if not filled:
         p2_result += 1
-#print_cave(new_cave)
+# print_cave(new_cave)
 print("part2:", p2_result)
-
