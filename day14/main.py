@@ -53,6 +53,16 @@ def fall_sand(sand_src, cave):
     return True
 
 
+def pour(cave, src):
+    overfill = False
+    result = 0
+    while not overfill:
+        overfill = fall_sand(src, cave)
+        if not overfill:
+            result += 1
+    return result
+
+
 def print_cave(cave):
     for row in cave:
         print("".join(row))
@@ -61,7 +71,6 @@ def print_cave(cave):
 lines = []
 for line in sys.stdin:
     lines.append(line.strip())
-
 cave_lines = []
 depth = 0
 left = sys.maxsize
@@ -81,42 +90,27 @@ for line in lines:
         if x > right:
             right = x
     cave_lines.append(line_points)
-
 cave = []
 cols_num = right - left + 1
+row_num = depth + 1
 offset = left
-sand_src = (500 - offset, 0)
-for i in range(depth + 1):
+for i in range(row_num):
     cave.append(["."] * cols_num)
 for cave_line in cave_lines:
     draw_line(cave_line, cave, offset)
-cave[sand_src[1]][sand_src[0]] = "+"
 
-overfill = False
-p1_result = 0
-while not overfill:
-    overfill = fall_sand(sand_src, cave)
-    if not overfill:
-        p1_result += 1
+sand_src = (500 - offset, 0)
+cave[sand_src[1]][sand_src[0]] = "+"
+print("part1:", pour(cave, sand_src))
 #print_cave(cave)
-print("part1:", p1_result)
 
 new_cave = []
-for i in range(depth + 1):
+for i in range(row_num):
     new_cave.append(["."] * 1000)
-    if i < len(cave):
-        for j in range(cols_num):
-            if cave[i][j] == "#":
-                new_cave[i][j + offset] = "#"
+    for j in range(cols_num):
+        if cave[i][j] == "#":
+            new_cave[i][j + offset] = "#"
 new_cave.append(["."] * 1000)
 new_cave.append(["#"] * 1000)
-
-overfill = False
-p2_result = 0
-sand_src2 = (500, 0)
-while not overfill:
-    overfill = fall_sand(sand_src2, new_cave)
-    if not overfill:
-        p2_result += 1
+print("part2:", pour(new_cave, (500, 0)))
 #print_cave(new_cave)
-print("part2:", p2_result)
