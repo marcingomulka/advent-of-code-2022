@@ -118,5 +118,5 @@ while not overfill:
     overfill = fall_sand(sand_src2, new_cave)
     if not overfill:
         p2_result += 1
-print_cave(new_cave)
+#print_cave(new_cave)
 print("part2:", p2_result)
