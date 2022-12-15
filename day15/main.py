@@ -1,4 +1,5 @@
 import sys
+import time
 from functools import cmp_to_key
 
 
@@ -39,6 +40,24 @@ def find_missing_col(ranges, limit):
     return -1
 
 
+def count_ranges(ranges):
+    result = 0
+    stack = []
+    first = ranges[0]
+    stack.append(first)
+    for x in ranges[1:]:
+        if x.bound == "R":
+            stack.pop()
+            last = x
+            if len(stack) == 0:
+                result += last.val - first.val
+        else:
+            if len(stack) == 0:
+                first = x
+            stack.append(x)
+    return result
+
+
 def manhattan(point1, point2):
     return abs(point2[0] - point1[0]) + abs(point2[1] - point1[1])
 
@@ -66,17 +85,7 @@ for line in lines:
     dist = manhattan((sensor_x, sensor_y), (beacon_x, beacon_y))
     dists.append(((sensor_x, sensor_y), dist))
 
-for pair in dists:
-    sensor = pair[0]
-    dist = pair[1]
-    if sensor[1] - dist <= P1_RANGE <= sensor[1] + dist + 1:
-        for x in range(sensor[0] - dist, sensor[0] + dist + 1):
-            y = P1_RANGE
-            if manhattan(sensor, (x, y)) <= dist and (x, y) not in sensors and (x, y) not in beacons:
-                p1_result.add((x, y))
-print("part1:", len(p1_result))
-
-
+start_time = time.time()
 # 4M rows with ranges bounds ("L" or "R")
 rows = []
 for i in range(SELECTED_RANGE):
@@ -96,16 +105,17 @@ for pair in dists:
             continue
         rows[i].append(RangeBound(left + dist - increment + 1, "L"))
         rows[i].append(RangeBound(right - dist + increment - 1, "R"))
-    increment -= 1
     for i in range(sensor[1] + 1, bottom + 1):
+        increment -= 1
         if i > SELECTED_RANGE - 1:
             break
         rows[i].append(RangeBound(left + dist - increment + 1, "L"))
         rows[i].append(RangeBound(right - dist + increment - 1, "R"))
-        increment -= 1
+print("calculation of ranges done, total rows processed:", len(rows))
+print("elapsed time [s]:", time.time() - start_time)
 
-
-print("calculation of ranges done", len(rows))
+rows[P1_RANGE].sort(key=cmp_to_key(compare_range_bound))
+print("part1:", count_ranges(rows[P1_RANGE]))
 
 p2_result = 0
 for i in range(len(rows)):
@@ -116,3 +126,4 @@ for i in range(len(rows)):
         p2_result = j * 4000000 + i
         break
 print("part2:", p2_result)
+print("elapsed time [s]", time.time() - start_time)
