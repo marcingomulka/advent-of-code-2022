@@ -1,23 +1,60 @@
 import sys
+from functools import cmp_to_key
+
+
+class RangeBound:
+    def __init__(self, val, bound):
+        self.val = val
+        # bound -  "L" for left, "R" for right
+        self.bound = bound
+
+    def __repr__(self):
+        return self.bound + str(self.val)
+
+
+def compare_range_bound(bound1, bound2):
+    equal = bound1.val - bound2.val
+    if equal == 0:
+        # if same val, then "L" is before "R"
+        return ord(bound1.bound) - ord(bound2.bound)
+    else:
+        return equal
+
+
+def find_missing_col(ranges, limit):
+    stack = []
+    first = ranges[0]
+    last = first
+    if first.val > 0 or first.bound != "L":
+        return 0
+    stack.append(first)
+    for x in ranges[1:]:
+        if x.bound == "R":
+            stack.pop()
+            last = x
+        else:
+            stack.append(x)
+        if len(stack) == 0 and last.val < limit:
+            return last.val + 1
+    return -1
 
 
 def manhattan(point1, point2):
     return abs(point2[0] - point1[0]) + abs(point2[1] - point1[1])
 
 
-
+TEST_RANGE = 21
+INPUT_RANGE = 4000001
+SELECTED_RANGE = INPUT_RANGE
+P1_RANGE = SELECTED_RANGE // 2
 lines = []
 for line in sys.stdin:
     lines.append(line.strip())
 
-bottom = 0
-top = sys.maxsize
-left = sys.maxsize
-right = 0
 sensors = set()
 beacons = set()
-ranges = set()
 dists = []
+p1_result = set()
 for line in lines:
     chunks = line.split()
     sensor_x = int(chunks[2].replace("x=", "").replace(",", ""))
@@ -28,20 +65,54 @@ for line in lines:
     beacons.add((beacon_x, beacon_y))
     dist = manhattan((sensor_x, sensor_y), (beacon_x, beacon_y))
     dists.append(((sensor_x, sensor_y), dist))
+
 for pair in dists:
     sensor = pair[0]
     dist = pair[1]
-    if sensor[1] - dist - 1 <= 2000000 <= sensor[1] + dist + 1:
-        for x in range(sensor[0] - dist - 1, sensor[0] + dist + 1):
-            #for y in range(sensor[1] - dist - 1, sensor[1] + dist + 1):
-            y = 2000000
+    if sensor[1] - dist <= P1_RANGE <= sensor[1] + dist + 1:
+        for x in range(sensor[0] - dist, sensor[0] + dist + 1):
+            y = P1_RANGE
             if manhattan(sensor, (x, y)) <= dist and (x, y) not in sensors and (x, y) not in beacons:
-                ranges.add((x, y))
-p1_result = 0
-for point in ranges:
-    if point[1] == 2000000:
-        p1_result += 1
-#p1_result.sort(key=lambda x: x[0])
-#for p in p1_result:
-#    print(p)
-print("part1:", p1_result)
+                p1_result.add((x, y))
+print("part1:", len(p1_result))
+
+
+# 4M rows with ranges bounds ("L" or "R")
+rows = []
+for i in range(SELECTED_RANGE):
+    rows.append([])
+for pair in dists:
+    sensor = pair[0]
+    dist = pair[1]
+    top = sensor[1] - dist
+    bottom = sensor[1] + dist
+    left = sensor[0] - dist
+    right = sensor[0] + dist
+
+    increment = 0
+    for i in range(top, sensor[1] + 1):
+        increment += 1
+        if i < 0:
+            continue
+        rows[i].append(RangeBound(left + dist - increment + 1, "L"))
+        rows[i].append(RangeBound(right - dist + increment - 1, "R"))
+    increment -= 1
+    for i in range(sensor[1] + 1, bottom + 1):
+        if i > SELECTED_RANGE - 1:
+            break
+        rows[i].append(RangeBound(left + dist - increment + 1, "L"))
+        rows[i].append(RangeBound(right - dist + increment - 1, "R"))
+        increment -= 1
+
+
+print("calculation of ranges done", len(rows))
+
+p2_result = 0
+for i in range(len(rows)):
+    rows[i].sort(key=cmp_to_key(compare_range_bound))
+    ranges = rows[i]
+    j = find_missing_col(ranges, SELECTED_RANGE)
+    if j > 0:
+        p2_result = j * 4000000 + i
+        break
+print("part2:", p2_result)
