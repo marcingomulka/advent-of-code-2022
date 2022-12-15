@@ -122,7 +122,7 @@ for i in range(len(rows)):
     rows[i].sort(key=cmp_to_key(compare_range_bound))
     ranges = rows[i]
     j = find_missing_col(ranges, SELECTED_RANGE)
-    if j > 0:
+    if j >= 0:
         p2_result = j * 4000000 + i
         break
 print("part2:", p2_result)
