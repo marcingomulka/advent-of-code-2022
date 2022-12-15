@@ -70,9 +70,7 @@ lines = []
 for line in sys.stdin:
     lines.append(line.strip())
 
-sensors = set()
-beacons = set()
-dists = []
+sensor_dist_list = []
 p1_result = set()
 for line in lines:
     chunks = line.split()
@@ -80,19 +78,17 @@ for line in lines:
     sensor_y = int(chunks[3].replace("y=", "").replace(":", ""))
     beacon_x = int(chunks[8].replace("x=", "").replace(",", ""))
     beacon_y = int(chunks[9].replace("y=", ""))
-    sensors.add((sensor_x, sensor_y))
-    beacons.add((beacon_x, beacon_y))
     dist = manhattan((sensor_x, sensor_y), (beacon_x, beacon_y))
-    dists.append(((sensor_x, sensor_y), dist))
+    sensor_dist_list.append(((sensor_x, sensor_y), dist))
 
 start_time = time.time()
 # 4M rows with ranges bounds ("L" or "R")
 rows = []
 for i in range(SELECTED_RANGE):
     rows.append([])
-for pair in dists:
-    sensor = pair[0]
-    dist = pair[1]
+for sensor_dist in sensor_dist_list:
+    sensor = sensor_dist[0]
+    dist = sensor_dist[1]
     top = sensor[1] - dist
     bottom = sensor[1] + dist
     left = sensor[0] - dist
