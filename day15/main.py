@@ -91,22 +91,20 @@ for sensor_dist in sensor_dist_list:
     dist = sensor_dist[1]
     top = sensor[1] - dist
     bottom = sensor[1] + dist
-    left = sensor[0] - dist
-    right = sensor[0] + dist
 
     increment = 0
     for i in range(top, sensor[1] + 1):
         increment += 1
         if i < 0:
             continue
-        rows[i].append(RangeBound(left + dist - increment + 1, "L"))
-        rows[i].append(RangeBound(right - dist + increment - 1, "R"))
+        rows[i].append(RangeBound(sensor[0] - increment + 1, "L"))
+        rows[i].append(RangeBound(sensor[0] + increment - 1, "R"))
     for i in range(sensor[1] + 1, bottom + 1):
         increment -= 1
         if i > SELECTED_RANGE - 1:
             break
-        rows[i].append(RangeBound(left + dist - increment + 1, "L"))
-        rows[i].append(RangeBound(right - dist + increment - 1, "R"))
+        rows[i].append(RangeBound(sensor[0] - increment + 1, "L"))
+        rows[i].append(RangeBound(sensor[0] + increment - 1, "R"))
 print("calculation of ranges done, total rows processed:", len(rows))
 print("elapsed time [s]:", time.time() - start_time)
 
