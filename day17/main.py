@@ -105,8 +105,8 @@ print("part1:", simulate_tetris(shapes, moves, board, range(0, 2022)))
 CYCLE_TOWER_HEIGHT = 2738
 CYCLE_LEN = 1720
 
-cycle_begin = 1000000000000 - (1000000000000 // CYCLE_LEN) * CYCLE_LEN
-total_cycles = (1000000000000 - cycle_begin) // CYCLE_LEN
+cycle_begin = 1000000000000 % CYCLE_LEN
+total_cycles = 1000000000000 // CYCLE_LEN
 board = [["."] * 7]
 
 remainder = simulate_tetris(shapes, moves, board, range(0, cycle_begin))
