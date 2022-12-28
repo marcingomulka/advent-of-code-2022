@@ -56,47 +56,6 @@ def can_fall(rock, board, pos):
     return rock.is_blocked((pos[0] - 1, pos[1]), board)
 
 
-def sweep(board, offset_end, offset_begin):
-    print("sweep", offset_begin, offset_end)
-    for i in range(offset_begin, offset_end):
-        board.popleft()
-
-
-def update_min(min_per_col, pos, offset, rock, board):
-    row_idx = pos[0] - rock.height + 1
-    # print("row_idx", row_idx)
-    for j in range(pos[1], pos[1] + rock.width):
-        if board[row_idx][j] == "#" and row_idx + offset > min_per_col[j]:
-            # print("new min for col", j, "value=", row_idx + offset)
-            min_per_col[j] = row_idx + offset
-    return min_per_col
-
-
-def print_board(board):
-    for row in board:
-        print("".join(row))
-
-
-def calc_combinations(board, top):
-    result = dict()
-    for i in range(top):
-        row = board[i]
-        key = "".join(row)
-        if key not in result.keys():
-            result[key] = []
-        result[key].append(i)
-    return result
-
-
-def diffs(values):
-    first = values[0]
-    result = []
-    for i in range(1, len(values)):
-        result.append(values[i] - first)
-        first = values[i]
-    return result
-
-
 def simulate_tetris(top_idx, wind, shapes, moves, board, step_range):
     for i in step_range:
         rock = shapes[i % len(shapes)]
@@ -135,9 +94,7 @@ shapes = [Block(4, 1, {(0, 0), (0, 1), (0, 2), (0, 3)}),
           Block(1, 4, {(0, 0), (1, 0), (2, 0), (3, 0)}),
           Block(2, 2, {(0, 0), (0, 1), (1, 0), (1, 1)})
           ]
-wind = 0
-p1_result = simulate_tetris(-1, wind, shapes, moves, board, range(0, 2022))
-print("part1:", p1_result)
+print("part1:", simulate_tetris(-1, 0, shapes, moves, board, range(0, 2022)))
 
 # after some empirical pattern occurrence matching, found a cycle in the tetris tower
 CYCLE_TOWER_HEIGHT = 2738
