@@ -68,14 +68,15 @@ def simulate_tetris(shapes, moves, board, step_range):
         pos = (new_row, 2)
         while not settled:
             move = moves[wind % len(moves)]
-            pos, settled = move_rock(board, move, pos, rock, settled)
+            pos, settled = move_rock(board, move, pos, rock)
             wind += 1
         if pos[0] > top:
             top = pos[0]
     return top + 1
 
 
-def move_rock(board, move, pos, rock, settled):
+def move_rock(board, move, pos, rock):
+    settled = False
     if rock.can_float(move, board, pos):
         pos = rock.float_rock(move, pos)
     if rock.can_fall(board, pos):
