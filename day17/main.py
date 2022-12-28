@@ -1,5 +1,4 @@
 import sys
-from collections import deque
 
 
 class Block:
@@ -78,9 +77,9 @@ def print_board(board):
         print("".join(row))
 
 
-def calc_combinations(board):
+def calc_combinations(board, top):
     result = dict()
-    for i in range(len(board) - 10):
+    for i in range(top):
         row = board[i]
         key = "".join(row)
         if key not in result.keys():
@@ -121,17 +120,7 @@ def simulate_tetris(top_idx, wind, shapes, moves, board, step_range):
                 wind = 0
         if pos[0] > top_idx:
             top_idx = pos[0]
-        key = ""
-        if i > 10 and top_idx == 62:
-            combs = calc_combinations(board)
-            for key in combs.keys():
-                occurs = combs[key]
-                sorted(occurs)
-                print(key, occurs)
-                print(key, diffs(occurs))
-                print(key, top_idx)
-            print("????????????????????????????????????????")
-    return top_idx+1
+    return top_idx + 1
 
 
 lines = []
@@ -151,23 +140,14 @@ p1_result = simulate_tetris(-1, wind, shapes, moves, board, range(0, 2022))
 print("part1:", p1_result)
 
 # after some empirical pattern occurrence matching, found a cycle in the tetris tower
-# cycle_len = 2738
-# cycle_begin = 2821
-cycle_len = 53
-cycle_begin = 62
-total_cycles = (1000000000000 - cycle_begin) // cycle_len
-start = (1000000000000 - cycle_begin) % cycle_len
-wind = start % len(moves)
+CYCLE_TOWER_HEIGHT = 2738
+CYCLE_LEN = 1720
+
+cycle_begin = 1000000000000 - (1000000000000 // CYCLE_LEN) * CYCLE_LEN
+total_cycles = (1000000000000 - cycle_begin) // CYCLE_LEN
+start = CYCLE_LEN * total_cycles + cycle_begin
 board = [["."] * 7]
 
-p2_result = simulate_tetris(0, shapes, moves, board, range(0, 20100))
-#top = simulate_tetris(-1, 0, shapes, moves, board, range(0, cycle_begin + 3))
-#print("total", total_cycles, "start", start, "top", top)
-#print_board(board)
-#board = board[cycle_begin:]
-#print("????????????????????????")
-#print_board(board)
-#p2_result = simulate_tetris(top, wind, shapes, moves, board, range(3, start + 1))
-#print(p2_result)
-#print(cycle_len * total_cycles)
-#print("part2:", p2_result + cycle_len * total_cycles)
+begin_height = simulate_tetris(-1, 0, shapes, moves, board, range(0, cycle_begin))
+remainder = simulate_tetris(begin_height - 1, start % len(moves), shapes, moves, board, range(start, 1000000000000))
+print("part2:", CYCLE_TOWER_HEIGHT * total_cycles + remainder)
