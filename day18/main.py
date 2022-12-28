@@ -1,16 +1,14 @@
 import sys
 
 
-def count_faces_axis_x(zero):
+def count_faces_axis_x(zero, space):
     faces_count = 0
     for k in range(len(space[0][0])):
         for j in range(len(space[0])):
             sum = 0
-            pattern = ""
-            for i in range(len(space)):
-                pattern += space[i][j][k]
             is_zero = True
-            for c in pattern:
+            for i in range(len(space)):
+                c = space[i][j][k]
                 if c == "1" and is_zero:
                     sum += 1
                     is_zero = False
@@ -23,16 +21,14 @@ def count_faces_axis_x(zero):
     return faces_count
 
 
-def count_faces_axis_y(zero):
+def count_faces_axis_y(zero, space):
     faces_count = 0
     for i in range(len(space)):
         for k in range(len(space[0][0])):
             sum = 0
-            pattern = ""
-            for j in range(len(space[0])):
-                pattern += space[i][j][k]
             is_zero = True
-            for c in pattern:
+            for j in range(len(space[0])):
+                c = space[i][j][k]
                 if c == "1" and is_zero:
                     sum += 1
                     is_zero = False
@@ -45,16 +41,14 @@ def count_faces_axis_y(zero):
     return faces_count
 
 
-def count_faces_axis_z(zero):
+def count_faces_axis_z(zero, space):
     faces_count = 0
     for i in range(len(space)):
         for j in range(len(space[0])):
             sum = 0
-            pattern = ""
-            for k in range(len(space[0][0])):
-                pattern += space[i][j][k]
             is_zero = True
-            for c in pattern:
+            for k in range(len(space[0][0])):
+                c = space[i][j][k]
                 if c == "1" and is_zero:
                     sum += 1
                     is_zero = False
@@ -138,15 +132,15 @@ for i in range(min_x, max_x + 1):
         area.append(row)
     space.append(area)
 
-z_faces = count_faces_axis_z("0")
-y_faces = count_faces_axis_y("0")
-x_faces = count_faces_axis_x("0")
+z_faces = count_faces_axis_z("0", space)
+y_faces = count_faces_axis_y("0", space)
+x_faces = count_faces_axis_x("0", space)
 print("part1", z_faces + x_faces + y_faces)
 
 start = (0, 0, 0)
 fill(start, space)
 
-z_faces = count_faces_axis_z("Z")
-y_faces = count_faces_axis_y("Z")
-x_faces = count_faces_axis_x("Z")
+z_faces = count_faces_axis_z("Z", space)
+y_faces = count_faces_axis_y("Z", space)
+x_faces = count_faces_axis_x("Z", space)
 print("part2", z_faces + x_faces + y_faces)
